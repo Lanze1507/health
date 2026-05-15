@@ -5,6 +5,7 @@ import { Colors } from '../../constants';
 import { useAuth } from '../../hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { getDashboardStats } from '../../services/dashboardService';
+import { getSesionesRecientes } from '../../services/sesionService';
 
 const OBJETIVO_LABELS: Record<string, { label: string; emoji: string }> = {
   perder_peso: { label: 'Perder peso', emoji: '🔥' },
@@ -22,6 +23,9 @@ const [stats, setStats] = useState({
   ejercicios: 0,
   diasActivos: 0,
 });
+
+const [actividad, setActividad] = useState<any[]>([]);
+
   const router = useRouter();
 
   const objetivo = perfil?.objetivo
@@ -34,10 +38,17 @@ const [stats, setStats] = useState({
     if (!session?.user?.id) return;
 
     const data = await getDashboardStats(
-      session.user.id
-    );
+  session.user.id
+);
 
-    setStats(data);
+setStats(data);
+
+const recientes = await getSesionesRecientes(
+  session.user.id,
+  3
+);
+
+setActividad(recientes.sesiones);
   }
 
   cargarStats();
@@ -171,18 +182,29 @@ const [stats, setStats] = useState({
         </Text>
 
         <View style={styles.activityCard}>
-          <Text style={styles.activityItem}>
-            ✅ Sesión iniciada correctamente
-          </Text>
 
-          <Text style={styles.activityItem}>
-            💪 Rutina lista para entrenar
-          </Text>
+  {actividad.length === 0 ? (
 
-          <Text style={styles.activityItem}>
-            🔥 Sigue manteniendo tu progreso
-          </Text>
-        </View>
+    <Text style={styles.activityItem}>
+      Aún no hay actividad reciente
+    </Text>
+
+  ) : (
+
+    actividad.map((sesion, index) => (
+
+      <Text
+        key={index}
+        style={styles.activityItem}
+      >
+        🏋️ {sesion.rutina?.nombre} completada
+      </Text>
+
+    ))
+
+  )}
+
+</View>
 
       </View>
     </ScrollView>
