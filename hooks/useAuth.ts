@@ -11,7 +11,7 @@ type AuthState = {
 
 export function useAuth(): AuthState {
   const [session, setSession] = useState<Session | null>(null);
-  const [perfil, setPerfil]   = useState<PerfilUsuario | null>(null);
+  const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function cargarPerfil(userId: string) {
@@ -19,30 +19,45 @@ export function useAuth(): AuthState {
       .from('perfil_usuario')
       .select('*')
       .eq('usuario_id', userId)
-      .maybeSingle(); // ← clave: no lanza error si no hay fila
+      .maybeSingle();
+
     setPerfil(data as PerfilUsuario | null);
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
+    async function init() {
+      const { data } = await supabase.auth.getSession();
+
       const s = data.session;
+
       setSession(s);
-      if (s?.user) await cargarPerfil(s.user.id);
-      setLoading(false); // ← siempre llega aquí
-    });
+
+      if (s?.user) {
+        await cargarPerfil(s.user.id);
+      }
+
+      setLoading(false);
+    }
+
+    init();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, newSession) => {
         setSession(newSession);
+
         if (newSession?.user) {
           await cargarPerfil(newSession.user.id);
         } else {
           setPerfil(null);
         }
+
+        setLoading(false);
       }
     );
 
-    return () => { listener.subscription.unsubscribe(); };
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   return { session, perfil, loading };
