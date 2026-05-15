@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lanze1507.HealthUp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,9 +40,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "56439f01-87f8-442c-89db-46515965f815"
+        "projectId": "16552516-c61f-43ee-be4e-d7993f5ff592"
       }
     },
-    "owner": "marmontenegro"
+    "owner": "lanze1507"
   }
 }
