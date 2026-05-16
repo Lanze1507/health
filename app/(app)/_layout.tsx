@@ -52,6 +52,19 @@ export default function AppLayout() {
           ),
         }}
       />
+
+<Tabs.Screen
+  name="logros"
+  options={{
+    title: 'Logros',
+    tabBarIcon: ({ color }) => (
+      <Text style={{ fontSize: 20 }}>
+        🏆
+      </Text>
+    ),
+  }}
+/>
+
     </Tabs>
   );
 }
