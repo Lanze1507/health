@@ -400,12 +400,11 @@ export default function RutinasScreen() {
             </ScrollView>
 
             {/* Finalizar */}
-            <TouchableOpacity style={styles.btnFinalizar} onPress={() => {
-              Alert.alert('Finalizar sesión', '¿Terminar el entrenamiento?', [
-                { text: 'Cancelar', style: 'cancel' },
-                { text: 'Finalizar', onPress: handleFinalizarSesion },
-              ]);
-            }}>
+            {/* Finalizar */}
+<TouchableOpacity
+  style={styles.btnFinalizar}
+  onPress={handleFinalizarSesion}
+>
               <Text style={styles.btnFinalizarText}>⏹ Finalizar sesión</Text>
             </TouchableOpacity>
           </View>
