@@ -113,14 +113,32 @@ export default function RutinasScreen() {
   }
 
   async function handleFinalizarSesion() {
-    if (!sesionId) return;
-    setSesionActiva(false);
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    await finalizarSesion(sesionId);
-    Alert.alert('¡Sesión completada! 🎉', `Duración: ${formatTiempo(segundos)}`, [
-      { text: 'OK', onPress: () => { setSesionId(null); setSegundos(0); setModal('detalle'); } },
-    ]);
+
+  if (!sesionId) return;
+
+  setSesionActiva(false);
+
+  if (intervalRef.current) {
+    clearInterval(intervalRef.current);
   }
+
+  const { error } = await finalizarSesion(
+    sesionId
+  );
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setSesionId(null);
+
+  setSegundos(0);
+
+  setPausada(false);
+
+  setModal('detalle');
+}
 
   function toggleSerie(reId: string, idx: number) {
     setSeriesComp((prev) => {
@@ -399,7 +417,6 @@ export default function RutinasScreen() {
               ))}
             </ScrollView>
 
-            {/* Finalizar */}
             {/* Finalizar */}
 <TouchableOpacity
   style={styles.btnFinalizar}
