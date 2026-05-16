@@ -86,6 +86,16 @@ setActividad(recientes.sesiones);
             <Text style={styles.logoutText}>Salir</Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+  onPress={() => router.push('/logros')}
+  style={styles.trophyBtn}
+>
+
+  <Text style={styles.trophyText}>
+    🏆
+  </Text>
+
+</TouchableOpacity>
 
         {/* Estadísticas */}
         <View style={styles.statsGrid}>
@@ -396,4 +406,19 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontSize: 14,
   },
+
+  trophyBtn: {
+  width: 48,
+  height: 48,
+  borderRadius: 999,
+  backgroundColor: Colors.primary,
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginTop: 12,
+},
+
+trophyText: {
+  fontSize: 22,
+},
+
 });
