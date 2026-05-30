@@ -22,6 +22,14 @@ import {
 
 export default function LogrosScreen() {
 
+  const TITULOS_NIVEL = {
+  1: 'Principiante',
+  2: 'Constante',
+  3: 'Atleta',
+  4: 'Experto',
+  5: 'Leyenda',
+};
+
   const { session } = useAuth();
 
   const [logros, setLogros] =
@@ -29,6 +37,14 @@ export default function LogrosScreen() {
 
   const [monedas, setMonedas] =
     useState(0);
+    const [nivel, setNivel] =
+  useState(1);
+
+const [xpActual, setXpActual] =
+  useState(0);
+
+const [xpSiguiente, setXpSiguiente] =
+  useState(500);
 
   const [reclamados, setReclamados] =
     useState<string[]>([]);
@@ -39,25 +55,57 @@ export default function LogrosScreen() {
   // Reclamar recompensa
   function reclamarLogro(logroId: string) {
 
-    if (reclamados.includes(logroId)) {
-      return;
+  if (reclamados.includes(logroId)) {
+    return;
+  }
+
+  setAnimando(true);
+
+  setTimeout(() => {
+
+    setAnimando(false);
+
+    const nuevasMonedas =
+  monedas + 500;
+
+const nuevoXP =
+  xpActual + 500;
+
+setXpActual(nuevoXP);
+
+    setMonedas(nuevasMonedas);
+
+    setXpActual(nuevasMonedas);
+
+    if (nuevasMonedas >= 3500) {
+      setNivel(5);
+      setXpSiguiente(5000);
+    }
+    else if (nuevasMonedas >= 2000) {
+      setNivel(4);
+      setXpSiguiente(3500);
+    }
+    else if (nuevasMonedas >= 1000) {
+      setNivel(3);
+      setXpSiguiente(2000);
+    }
+    else if (nuevasMonedas >= 500) {
+      setNivel(2);
+      setXpSiguiente(1000);
+    }
+    else {
+      setNivel(1);
+      setXpSiguiente(500);
     }
 
-    setAnimando(true);
+    setReclamados((prev) => [
+      ...prev,
+      logroId,
+    ]);
 
-    setTimeout(() => {
+  }, 1500);
 
-      setAnimando(false);
-
-      setMonedas((m) => m + 100);
-
-      setReclamados((prev) => [
-        ...prev,
-        logroId,
-      ]);
-
-    }, 1500);
-  }
+}
 
   // Cargar logros
   useEffect(() => {
@@ -104,7 +152,7 @@ export default function LogrosScreen() {
           </Text>
 
           <Text style={styles.animText}>
-            +100 monedas
+            +500 monedas
           </Text>
 
         </View>
@@ -122,6 +170,36 @@ export default function LogrosScreen() {
           <Text style={styles.coinText}>
             🪙 {monedas}
           </Text>
+        </View>
+
+      </View>
+
+      <View style={styles.levelCard}>
+
+        <Text style={styles.levelTitle}>
+          ⭐ Nivel {nivel} - {TITULOS_NIVEL[nivel as keyof typeof TITULOS_NIVEL]}
+        </Text>
+
+        <Text style={styles.levelXp}>
+          XP: {xpActual} / {xpSiguiente}
+        </Text>
+
+        <View style={styles.progressBar}>
+
+          <View
+            style={[
+              styles.progressFill,
+              {
+                width: `${
+                  Math.min(
+                    (xpActual / xpSiguiente) * 100,
+                    100
+                  )
+                }%`,
+              },
+            ]}
+          />
+
         </View>
 
       </View>
@@ -230,6 +308,39 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
+  },
+
+  levelCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 22,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: 20,
+  },
+
+  levelTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: Colors.text,
+    marginBottom: 8,
+  },
+
+  levelXp: {
+    color: Colors.textSecondary,
+    marginBottom: 14,
+  },
+
+  progressBar: {
+    backgroundColor: Colors.border,
+    borderRadius: 999,
+    overflow: 'hidden',
+    height: 12,
+  },
+
+  progressFill: {
+    height: '100%',
+    backgroundColor: Colors.primary,
   },
 
   grid: {

@@ -133,11 +133,6 @@ useEffect(() => {
     }
   }
 
-  async function borrarHistorial() {
-    await AsyncStorage.removeItem('healthup_chat');
-    setMensajes([MENSAJE_BIENVENIDA]);
-  }
-
   return (
 
     <ScrollView
@@ -153,17 +148,6 @@ useEffect(() => {
       <Text style={styles.subtitle}>
         Tu asistente inteligente personal
       </Text>
-
-      <TouchableOpacity
-        style={styles.clearButton}
-        onPress={borrarHistorial}
-      >
-
-        <Text style={styles.clearText}>
-          🗑️ Borrar historial
-        </Text>
-
-      </TouchableOpacity>
 
       <TextInput
         style={styles.input}
@@ -287,17 +271,6 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
-  },
-
-  clearButton: {
-    marginTop: 12,
-    marginBottom: 12,
-    alignSelf: 'flex-start',
-  },
-
-  clearText: {
-    color: 'red',
     fontWeight: '700',
   },
 
