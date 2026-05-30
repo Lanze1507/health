@@ -65,6 +65,13 @@ export default function AppLayout() {
   }}
 />
 
+<Tabs.Screen
+  name="ia"
+  options={{
+    title: 'Coach IA',
+  }}
+/>
+
     </Tabs>
   );
 }
