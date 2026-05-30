@@ -28,9 +28,27 @@ export async function getDashboardStats(usuarioId: string) {
     .select('id, rutina!inner(usuario_id)')
     .eq('rutina.usuario_id', usuarioId);
 
-  return {
-    rutinas: rutinasCount ?? 0,
-    ejercicios: rutinaEj?.length ?? 0,
-    diasActivos: diasUnicos.size,
-  };
+  const monedas =
+  diasUnicos.size * 100;
+
+let nivel = 1;
+
+if (monedas >= 3500)
+  nivel = 5;
+else if (monedas >= 2000)
+  nivel = 4;
+else if (monedas >= 1000)
+  nivel = 3;
+else if (monedas >= 500)
+  nivel = 2;
+
+return {
+  rutinas: rutinasCount ?? 0,
+  ejercicios: rutinaEj?.length ?? 0,
+  diasActivos: diasUnicos.size,
+
+  monedas,
+  xp: monedas,
+  nivel,
+};
 }

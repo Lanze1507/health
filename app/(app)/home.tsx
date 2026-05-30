@@ -22,6 +22,10 @@ const [stats, setStats] = useState({
   rutinas: 0,
   ejercicios: 0,
   diasActivos: 0,
+
+  monedas: 0,
+  xp: 0,
+  nivel: 1,
 });
 
 const [actividad, setActividad] = useState<any[]>([]);
@@ -126,6 +130,42 @@ setActividad(recientes.sesiones);
 
         </View>
 
+        <View style={styles.proCard}>
+
+          <Text style={styles.proTitle}>
+            ⭐ Nivel {stats.nivel}
+          </Text>
+
+          <Text style={styles.proText}>
+            XP acumulado: {stats.xp}
+          </Text>
+
+        </View>
+
+        <View style={styles.proCard}>
+
+          <Text style={styles.proTitle}>
+            🪙 Monedas
+          </Text>
+
+          <Text style={styles.proText}>
+            {stats.monedas}
+          </Text>
+
+        </View>
+
+        <View style={styles.proCard}>
+
+          <Text style={styles.proTitle}>
+            🎯 Reto del día
+          </Text>
+
+          <Text style={styles.proText}>
+            Completa una sesión de entrenamiento
+          </Text>
+
+        </View>
+
         {/* Objetivo */}
         {objetivo && (
           <View style={styles.objetivoCard}>
@@ -226,6 +266,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+
+  proCard: {
+  backgroundColor: Colors.surface,
+  borderWidth: 1,
+  borderColor: Colors.border,
+  borderRadius: 20,
+  padding: 20,
+  marginBottom: 16,
+},
+
+proTitle: {
+  fontSize: 18,
+  fontWeight: '800',
+  color: Colors.text,
+},
+
+proText: {
+  marginTop: 6,
+  color: Colors.textSecondary,
+},
 
   scroll: {
     padding: 20,
@@ -350,6 +410,26 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: Colors.text,
     marginTop: 4,
+  },
+
+  proCard: {
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+
+  proTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.text,
+    marginBottom: 6,
+  },
+
+  proText: {
+    color: Colors.textSecondary,
   },
 
   seccionTitulo: {
