@@ -69,6 +69,11 @@ export default function AppLayout() {
   name="ia"
   options={{
     title: 'Coach IA',
+    tabBarIcon: ({ color }) => (
+      <Text style={{ fontSize: 20 }}>
+        🤖
+      </Text>
+    ),
   }}
 />
 
