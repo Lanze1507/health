@@ -14,20 +14,24 @@ import { Colors } from '../../constants';
 
 import { preguntarIA } from '../../services/geminiService';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
+
 export default function IAScreen() {
 
   const [pregunta, setPregunta] =
     useState('');
 
-  const [mensajes, setMensajes] = useState<
-    { tipo: 'user' | 'bot'; texto: string }[]
-  >([
-    {
-      tipo: 'bot',
-      texto:
-        'Hola 👋 Soy HealthUp Coach. Puedo ayudarte con fitness, nutrición, tecnología, estudios y cualquier duda que tengas. 💪',
-    },
-  ]);
+  // NUEVO ESTADO INICIAL
+const MENSAJE_BIENVENIDA = {
+  tipo: 'bot' as const,
+  texto:
+    'Hola 👋 Soy HealthUp Coach. Puedo ayudarte con fitness, nutrición, tecnología, estudios y cualquier duda que tengas. 💪',
+};
+
+const [mensajes, setMensajes] = useState<
+  { tipo: 'user' | 'bot'; texto: string }[]
+>([MENSAJE_BIENVENIDA]);
 
   const [loading, setLoading] =
     useState(false);
@@ -35,7 +39,40 @@ export default function IAScreen() {
   const [escribiendo, setEscribiendo] =
     useState(false);
 
+   useEffect(() => {
+
+  async function cargarHistorial() {
+
+    const guardado =
+      await AsyncStorage.getItem(
+        'healthup_chat'
+      );
+
+    if (guardado) {
+
+      const historial =
+        JSON.parse(guardado);
+
+      setMensajes(historial);
+
+    }
+  }
+
+  cargarHistorial();
+
+}, []);
+
+useEffect(() => {
+
+  AsyncStorage.setItem(
+    'healthup_chat',
+    JSON.stringify(mensajes)
+  );
+
+}, [mensajes]);
+
   async function enviar() {
+    
 
     if (!pregunta.trim()) return;
 
@@ -47,24 +84,33 @@ export default function IAScreen() {
         tipo: 'user',
         texto: preguntaActual,
       },
+      
     ]);
+    
 
     setPregunta('');
     setLoading(true);
     setEscribiendo(true);
+    
 
     try {
 
       const texto =
         await preguntarIA(preguntaActual);
 
-      setMensajes((prev) => [
-        ...prev,
-        {
-          tipo: 'bot',
-          texto,
-        },
-      ]);
+      setMensajes((prev) => {
+
+  const nuevos = [
+    ...prev,
+    {
+      tipo: 'bot' as const,
+      texto,
+    },
+  ];
+
+  return nuevos.slice(-20);
+
+});
 
     } catch (error) {
 
@@ -87,6 +133,11 @@ export default function IAScreen() {
     }
   }
 
+  async function borrarHistorial() {
+    await AsyncStorage.removeItem('healthup_chat');
+    setMensajes([MENSAJE_BIENVENIDA]);
+  }
+
   return (
 
     <ScrollView
@@ -102,6 +153,17 @@ export default function IAScreen() {
       <Text style={styles.subtitle}>
         Tu asistente inteligente personal
       </Text>
+
+      <TouchableOpacity
+        style={styles.clearButton}
+        onPress={borrarHistorial}
+      >
+
+        <Text style={styles.clearText}>
+          🗑️ Borrar historial
+        </Text>
+
+      </TouchableOpacity>
 
       <TextInput
         style={styles.input}
@@ -225,6 +287,17 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: '#fff',
+    fontWeight: '700',
+  },
+
+  clearButton: {
+    marginTop: 12,
+    marginBottom: 12,
+    alignSelf: 'flex-start',
+  },
+
+  clearText: {
+    color: 'red',
     fontWeight: '700',
   },
 
