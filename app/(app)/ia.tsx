@@ -19,36 +19,72 @@ export default function IAScreen() {
   const [pregunta, setPregunta] =
     useState('');
 
-  const [respuesta, setRespuesta] =
-    useState('');
+  const [mensajes, setMensajes] = useState<
+    { tipo: 'user' | 'bot'; texto: string }[]
+  >([
+    {
+      tipo: 'bot',
+      texto:
+        'Hola 👋 Soy HealthUp Coach. Puedo ayudarte con fitness, nutrición, tecnología, estudios y cualquier duda que tengas. 💪',
+    },
+  ]);
 
   const [loading, setLoading] =
+    useState(false);
+
+  const [escribiendo, setEscribiendo] =
     useState(false);
 
   async function enviar() {
 
     if (!pregunta.trim()) return;
 
+    const preguntaActual = pregunta;
+
+    setMensajes((prev) => [
+      ...prev,
+      {
+        tipo: 'user',
+        texto: preguntaActual,
+      },
+    ]);
+
+    setPregunta('');
     setLoading(true);
+    setEscribiendo(true);
 
     try {
 
       const texto =
-        await preguntarIA(pregunta);
+        await preguntarIA(preguntaActual);
 
-      setRespuesta(texto);
+      setMensajes((prev) => [
+        ...prev,
+        {
+          tipo: 'bot',
+          texto,
+        },
+      ]);
 
     } catch (error) {
 
-  console.log(error);
+      console.log(error);
 
-  setRespuesta(
-    String(error)
-  );
+      setMensajes((prev) => [
+        ...prev,
+        {
+          tipo: 'bot',
+          texto:
+            'Ocurrió un error al consultar la IA.',
+        },
+      ]);
 
-}
+    } finally {
 
-    setLoading(false);
+      setEscribiendo(false);
+      setLoading(false);
+
+    }
   }
 
   return (
@@ -56,21 +92,22 @@ export default function IAScreen() {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scroll}
+      showsVerticalScrollIndicator={false}
     >
 
       <Text style={styles.title}>
-        🤖 Coach IA
+        🤖 HealthUp Coach
       </Text>
 
       <Text style={styles.subtitle}>
-        Haz preguntas sobre ejercicio y fitness
+        Tu asistente inteligente personal
       </Text>
 
       <TextInput
         style={styles.input}
         value={pregunta}
         onChangeText={setPregunta}
-        placeholder="¿Cómo puedo ganar músculo?"
+        placeholder="Escribe tu pregunta..."
         placeholderTextColor="#777"
         multiline
       />
@@ -78,6 +115,7 @@ export default function IAScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={enviar}
+        disabled={loading}
       >
 
         <Text style={styles.buttonText}>
@@ -94,17 +132,49 @@ export default function IAScreen() {
         />
       )}
 
-      {!!respuesta && (
+      <View style={styles.chatContainer}>
 
-        <View style={styles.responseCard}>
+        {mensajes.map((msg, index) => (
 
-          <Text style={styles.responseText}>
-            {respuesta}
-          </Text>
+          <View
+            key={index}
+            style={[
+              styles.message,
+              msg.tipo === 'user'
+                ? styles.userMessage
+                : styles.botMessage,
+            ]}
+          >
 
-        </View>
+            <Text style={styles.messageText}>
+              {msg.tipo === 'user'
+                ? '👤 '
+                : '🤖 '}
+              {msg.texto}
+            </Text>
 
-      )}
+          </View>
+
+        ))}
+
+        {escribiendo && (
+
+          <View
+            style={[
+              styles.message,
+              styles.botMessage,
+            ]}
+          >
+
+            <Text style={styles.messageText}>
+              🤖 HealthUp Coach está escribiendo...
+            </Text>
+
+          </View>
+
+        )}
+
+      </View>
 
     </ScrollView>
   );
@@ -120,6 +190,7 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 24,
     paddingTop: 60,
+    paddingBottom: 120,
   },
 
   title: {
@@ -157,18 +228,33 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  responseCard: {
+  chatContainer: {
     marginTop: 24,
-    backgroundColor: Colors.surface,
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    gap: 12,
   },
 
-  responseText: {
+  message: {
+    padding: 14,
+    borderRadius: 16,
+  },
+
+  userMessage: {
+    backgroundColor: Colors.primary,
+    alignSelf: 'flex-end',
+    maxWidth: '85%',
+  },
+
+  botMessage: {
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignSelf: 'flex-start',
+    maxWidth: '85%',
+  },
+
+  messageText: {
     color: Colors.text,
-    lineHeight: 24,
+    lineHeight: 22,
   },
 
 });
