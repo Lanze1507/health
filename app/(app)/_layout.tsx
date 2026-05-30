@@ -57,22 +57,17 @@ export default function AppLayout() {
   name="logros"
   options={{
     title: 'Logros',
-    tabBarIcon: ({ color }) => (
-      <Text style={{ fontSize: 20 }}>
-        🏆
-      </Text>
+    tabBarIcon: ({ focused }) => (
+      <TabIcon emoji="🏆" label="Logros" focused={focused} />
     ),
   }}
 />
 
 <Tabs.Screen
   name="ia"
-  options={{
-    title: 'Coach IA',
-    tabBarIcon: ({ color }) => (
-      <Text style={{ fontSize: 20 }}>
-        🤖
-      </Text>
+  options={{ title: 'Coach IA',
+    tabBarIcon: ({ focused }) => (
+      <TabIcon emoji="🤖" label="Coach" focused={focused} />
     ),
   }}
 />
