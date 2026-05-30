@@ -14,6 +14,12 @@ import { Colors } from '../../constants';
 import { useAuth } from '../../hooks/useAuth';
 
 import { getDashboardStats } from '../../services/dashboardService';
+import {
+  obtenerMonedas,
+  guardarMonedas,
+  obtenerXP,
+  guardarXP,
+} from '../../services/recompensasService';
 
 import {
   obtenerLogros,
@@ -68,12 +74,19 @@ const [xpSiguiente, setXpSiguiente] =
     const nuevasMonedas =
   monedas + 500;
 
+
+
+
+
+    setMonedas(nuevasMonedas);
+    guardarMonedas(nuevasMonedas);
+
 const nuevoXP =
   xpActual + 500;
 
 setXpActual(nuevoXP);
 
-    setMonedas(nuevasMonedas);
+guardarXP(nuevoXP);
 
     setXpActual(nuevasMonedas);
 
@@ -122,6 +135,15 @@ setXpActual(nuevoXP);
         ...stats,
         sesiones: stats.diasActivos,
       });
+
+      const monedasGuardadas =
+  await obtenerMonedas();
+
+const xpGuardado =
+  await obtenerXP();
+
+setMonedas(monedasGuardadas);
+setXpActual(xpGuardado);
 
       setLogros(logrosData);
     }

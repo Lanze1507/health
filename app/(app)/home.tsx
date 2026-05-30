@@ -1,11 +1,15 @@
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { signOut } from '../../services/authService';
 import { Colors } from '../../constants';
 import { useAuth } from '../../hooks/useAuth';
-import { useEffect, useState } from 'react';
 import { getDashboardStats } from '../../services/dashboardService';
 import { getSesionesRecientes } from '../../services/sesionService';
+import {
+  obtenerMonedas,
+  obtenerXP,
+} from '../../services/recompensasService';
 
 const OBJETIVO_LABELS: Record<string, { label: string; emoji: string }> = {
   perder_peso: { label: 'Perder peso', emoji: '🔥' },
@@ -46,6 +50,28 @@ const [actividad, setActividad] = useState<any[]>([]);
 );
 
 setStats(data);
+
+const monedas =
+  await obtenerMonedas();
+
+const xp =
+  await obtenerXP();
+
+setStats({
+  ...data,
+  monedas,
+  xp,
+  nivel:
+    xp >= 3500
+      ? 5
+      : xp >= 2000
+      ? 4
+      : xp >= 1000
+      ? 3
+      : xp >= 500
+      ? 2
+      : 1,
+});
 
 const recientes = await getSesionesRecientes(
   session.user.id,
@@ -412,25 +438,7 @@ proText: {
     marginTop: 4,
   },
 
-  proCard: {
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-  },
 
-  proTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: Colors.text,
-    marginBottom: 6,
-  },
-
-  proText: {
-    color: Colors.textSecondary,
-  },
 
   seccionTitulo: {
     fontSize: 14,
