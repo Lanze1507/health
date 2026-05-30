@@ -10,7 +10,7 @@ export async function preguntarIA(
 ) {
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
   });
 
   const prompt = `
@@ -41,3 +41,6 @@ ${pregunta}
 
   return result.response.text();
 }
+console.log(
+  process.env.EXPO_PUBLIC_GEMINI_API_KEY
+);

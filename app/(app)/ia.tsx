@@ -38,13 +38,15 @@ export default function IAScreen() {
 
       setRespuesta(texto);
 
-    } catch {
+    } catch (error) {
 
-      setRespuesta(
-        'Ocurrió un error al consultar la IA.'
-      );
+  console.log(error);
 
-    }
+  setRespuesta(
+    String(error)
+  );
+
+}
 
     setLoading(false);
   }
